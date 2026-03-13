@@ -79,6 +79,16 @@ h1{
     border:1px solid rgba(255,255,255,0.12);
 }
 
+/* status dot */
+#status-dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    background:#43b581;
+    flex-shrink:0;
+}
+
+/* icon (album art or app icon) */
 #presence-icon{
     width:48px;
     height:48px;
@@ -87,6 +97,7 @@ h1{
     display:none;
 }
 
+/* text */
 #presence-text p{
     margin:0;
     padding:0;
@@ -153,6 +164,7 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
 
 <!-- NEW WIDGET-STYLE PRESENCE BOX -->
 <div id="presence-box">
+    <div id="status-dot"></div>
     <img id="presence-icon" src="" alt="">
     <div id="presence-text">
         <p id="presence-title">Loading Discord status...</p>
@@ -181,10 +193,30 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
 const titleEl = document.getElementById("presence-title");
 const subEl = document.getElementById("presence-sub");
 const iconEl = document.getElementById("presence-icon");
+const dotEl = document.getElementById("status-dot");
+
+/* Status dot colors */
+const statusColors = {
+    online: "#43b581",
+    idle: "#faa61a",
+    dnd: "#f04747",
+    offline: "#747f8d"
+};
+
+/* Icons for apps */
+const appIcons = {
+    "Spotify": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg",
+    "Visual Studio Code": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visualstudiocode.svg",
+    "Roblox": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/roblox.svg",
+    "Google Chrome": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googlechrome.svg"
+};
 
 function updatePresence(d) {
 
-    // Spotify
+    /* Update status dot */
+    dotEl.style.background = statusColors[d.discord_status] || statusColors.offline;
+
+    /* Spotify */
     if (d.listening_to_spotify && d.spotify) {
         titleEl.innerText = `Listening to ${d.spotify.song}`;
         subEl.innerText = d.spotify.artist;
@@ -193,16 +225,24 @@ function updatePresence(d) {
         return;
     }
 
-    // Other activities (ignore custom status)
+    /* Other activities */
     const activity = d.activities.find(a => a.type !== 4);
     if (activity) {
         titleEl.innerText = activity.name;
         subEl.innerText = `${activity.details || ""} ${activity.state || ""}`.trim();
-        iconEl.style.display = "none";
+
+        /* If we have an icon for this app */
+        if (appIcons[activity.name]) {
+            iconEl.src = appIcons[activity.name];
+            iconEl.style.display = "block";
+        } else {
+            iconEl.style.display = "none";
+        }
+
         return;
     }
 
-    // Custom status fallback
+    /* Custom status */
     const custom = d.activities.find(a => a.type === 4);
     if (custom) {
         titleEl.innerText = "Status";
@@ -211,7 +251,7 @@ function updatePresence(d) {
         return;
     }
 
-    // Nothing else
+    /* Nothing else */
     titleEl.innerText = "Online";
     subEl.innerText = "";
     iconEl.style.display = "none";
