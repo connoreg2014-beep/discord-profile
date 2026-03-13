@@ -66,6 +66,43 @@ h1{
     text-align:left;
 }
 
+/* presence widget */
+#presence-box{
+    margin-top:15px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 15px;
+    background:rgba(255,255,255,0.08);
+    border-radius:12px;
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.12);
+}
+
+#presence-icon{
+    width:48px;
+    height:48px;
+    border-radius:10px;
+    object-fit:cover;
+    display:none;
+}
+
+#presence-text p{
+    margin:0;
+    padding:0;
+    text-align:left;
+}
+
+#presence-title{
+    font-weight:600;
+    font-size:15px;
+}
+
+#presence-sub{
+    font-size:13px;
+    opacity:0.8;
+}
+
 /* skills */
 .skills span{
     display:inline-block;
@@ -95,22 +132,6 @@ h1{
     background-position:100% 0;
     filter:brightness(1.2);
 }
-
-/* presence container */
-#discord-presence{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-top:10px;
-}
-
-#discord-album{
-    width:40px;
-    height:40px;
-    border-radius:6px;
-    object-fit:cover;
-    display:none;
-}
 </style>
 </head>
 <body>
@@ -130,10 +151,13 @@ h1{
 Hi, my name is Connor. I've been coding for 4 years now, and I have experience with Python, JavaScript, HTML, CSS, and building Discord bots and automation tools. I enjoy learning new technologies and creating fun and useful projects.
 </p>
 
-<!-- LIVE DISCORD PRESENCE -->
-<div id="discord-presence">
-    <img id="discord-album" src="" alt="">
-    <p id="discord-status">Loading Discord status...</p>
+<!-- NEW WIDGET-STYLE PRESENCE BOX -->
+<div id="presence-box">
+    <img id="presence-icon" src="" alt="">
+    <div id="presence-text">
+        <p id="presence-title">Loading Discord status...</p>
+        <p id="presence-sub"></p>
+    </div>
 </div>
 
 <div class="skills">
@@ -154,29 +178,43 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
 
 <!-- LIVE WEBSOCKET SCRIPT -->
 <script>
-const statusEl = document.getElementById("discord-status");
-const albumEl = document.getElementById("discord-album");
+const titleEl = document.getElementById("presence-title");
+const subEl = document.getElementById("presence-sub");
+const iconEl = document.getElementById("presence-icon");
 
 function updatePresence(d) {
- if (d.listening_to_spotify && d.spotify && d.spotify.album_art_url) {
-    statusEl.innerText = `Listening to ${d.spotify.song} — ${d.spotify.artist}`;
-    albumEl.src = d.spotify.album_art_url;
-    albumEl.style.display = "block";
-    return;
-}
 
-    // Other activities (ignore custom status type 4)
-    const activity = d.activities.find(a => a.type !== 4);
-    if (activity) {
-        statusEl.innerText =
-            `${activity.name} — ${activity.details || ""} ${activity.state || ""}`.trim();
-        albumEl.style.display = "none";
+    // Spotify
+    if (d.listening_to_spotify && d.spotify) {
+        titleEl.innerText = `Listening to ${d.spotify.song}`;
+        subEl.innerText = d.spotify.artist;
+        iconEl.src = d.spotify.album_art_url;
+        iconEl.style.display = "block";
         return;
     }
 
-    // Fallback
-    statusEl.innerText = "Online";
-    albumEl.style.display = "none";
+    // Other activities (ignore custom status)
+    const activity = d.activities.find(a => a.type !== 4);
+    if (activity) {
+        titleEl.innerText = activity.name;
+        subEl.innerText = `${activity.details || ""} ${activity.state || ""}`.trim();
+        iconEl.style.display = "none";
+        return;
+    }
+
+    // Custom status fallback
+    const custom = d.activities.find(a => a.type === 4);
+    if (custom) {
+        titleEl.innerText = "Status";
+        subEl.innerText = custom.state || "";
+        iconEl.style.display = "none";
+        return;
+    }
+
+    // Nothing else
+    titleEl.innerText = "Online";
+    subEl.innerText = "";
+    iconEl.style.display = "none";
 }
 
 const ws = new WebSocket("wss://api.lanyard.rest/socket");
@@ -193,10 +231,6 @@ ws.onmessage = (event) => {
     if (payload.t === "INIT_STATE" || payload.t === "PRESENCE_UPDATE") {
         updatePresence(payload.d);
     }
-};
-
-ws.onerror = () => {
-    statusEl.innerText = "Unable to load status";
 };
 </script>
 
