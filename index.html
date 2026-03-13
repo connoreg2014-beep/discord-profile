@@ -95,17 +95,30 @@ h1{
     background-position:100% 0;
     filter:brightness(1.2);
 }
+
+/* presence container */
+#discord-presence{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+#discord-album{
+    width:40px;
+    height:40px;
+    border-radius:6px;
+    object-fit:cover;
+    display:none;
+}
 </style>
 </head>
 <body>
 
-<!-- Background video (if you have one) -->
+<!-- Background video -->
 <video autoplay muted loop>
     <source src="background.mp4" type="video/mp4">
 </video>
-
-<!-- OR use image as background -->
-<!-- <img class="background" src="background.jpg"> -->
 
 <div class="card">
 
@@ -116,7 +129,12 @@ h1{
 <p class="desc">
 Hi, my name is Connor. I've been coding for 4 years now, and I have experience with Python, JavaScript, HTML, CSS, and building Discord bots and automation tools. I enjoy learning new technologies and creating fun and useful projects.
 </p>
-<p id="discord-status">Loading Discord status...</p>
+
+<!-- LIVE DISCORD PRESENCE -->
+<div id="discord-presence">
+    <img id="discord-album" src="" alt="">
+    <p id="discord-status">Loading Discord status...</p>
+</div>
 
 <div class="skills">
 <span>Python</span>
@@ -133,33 +151,54 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
 </div>
 
 </div>
+
+<!-- LIVE WEBSOCKET SCRIPT -->
 <script>
-fetch("https://api.lanyard.rest/v1/users/1117676075271594104")
-  .then(res => res.json())
-  .then(data => {
-      const d = data.data;
+const statusEl = document.getElementById("discord-status");
+const albumEl = document.getElementById("discord-album");
 
-      // Spotify activity
-      if (d.listening_to_spotify && d.spotify) {
-          document.getElementById("discord-status").innerText =
-              `Listening to ${d.spotify.song} — ${d.spotify.artist}`;
-          return;
-      }
+function updatePresence(d) {
+    // Spotify
+    if (d.listening_to_spotify && d.spotify) {
+        statusEl.innerText = `Listening to ${d.spotify.song} — ${d.spotify.artist}`;
+        albumEl.src = d.spotify.album_art_url;
+        albumEl.style.display = "block";
+        return;
+    }
 
-      // Other activities (games, VS Code, etc.)
-      const activity = d.activities.find(a => a.type !== 4); // ignore custom status
-      if (activity) {
-          document.getElementById("discord-status").innerText =
-              `${activity.name} — ${activity.details || ""} ${activity.state || ""}`;
-          return;
-      }
+    // Other activities (ignore custom status type 4)
+    const activity = d.activities.find(a => a.type !== 4);
+    if (activity) {
+        statusEl.innerText =
+            `${activity.name} — ${activity.details || ""} ${activity.state || ""}`.trim();
+        albumEl.style.display = "none";
+        return;
+    }
 
-      // If nothing else
-      document.getElementById("discord-status").innerText = "Online";
-  })
-  .catch(() => {
-      document.getElementById("discord-status").innerText = "Unable to load status";
-  });
+    // Fallback
+    statusEl.innerText = "Online";
+    albumEl.style.display = "none";
+}
+
+const ws = new WebSocket("wss://api.lanyard.rest/socket");
+
+ws.onopen = () => {
+    ws.send(JSON.stringify({
+        op: 2,
+        d: { subscribe_to_id: "1117676075271594104" }
+    }));
+};
+
+ws.onmessage = (event) => {
+    const payload = JSON.parse(event.data);
+    if (payload.t === "INIT_STATE" || payload.t === "PRESENCE_UPDATE") {
+        updatePresence(payload.d);
+    }
+};
+
+ws.onerror = () => {
+    statusEl.innerText = "Unable to load status";
+};
 </script>
 
 </body>
