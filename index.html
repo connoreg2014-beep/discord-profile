@@ -16,7 +16,20 @@ body{
     justify-content:center;
     overflow:hidden;
     color:white;
+    cursor:none; /* hide default cursor */
+    background:#000;
 }
+
+/* background modes */
+body.bg-video video{ display:block; }
+body.bg-gradient{
+    background:radial-gradient(circle at top, #3b1d5f, #05010a 55%, #000 100%);
+}
+body.bg-gradient video{ display:none; }
+body.bg-solid{
+    background:#050509;
+}
+body.bg-solid video{ display:none; }
 
 /* video background or static image */
 video, img.background{
@@ -27,6 +40,19 @@ video, img.background{
     height:100%;
     object-fit:cover;
     z-index:-2;
+}
+
+/* custom cursor */
+#custom-cursor{
+    position:fixed;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.9);
+    box-shadow:0 0 12px rgba(255,255,255,0.9);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    z-index:9999;
 }
 
 /* profile card */
@@ -270,9 +296,38 @@ h1{
     opacity:1;
     transform:translateX(-50%) translateY(-2px);
 }
+
+/* background switcher */
+.bg-switcher{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    display:flex;
+    gap:8px;
+    z-index:20;
+    font-size:11px;
+}
+.bg-switcher button{
+    padding:6px 10px;
+    border-radius:999px;
+    border:none;
+    background:rgba(0,0,0,0.7);
+    color:white;
+    cursor:pointer;
+    font-size:11px;
+    border:1px solid rgba(255,255,255,0.18);
+    backdrop-filter:blur(6px);
+    transition:0.2s;
+}
+.bg-switcher button:hover{
+    background:rgba(255,255,255,0.12);
+}
 </style>
 </head>
-<body>
+<body class="bg-video">
+
+<!-- custom cursor -->
+<div id="custom-cursor"></div>
 
 <!-- Background video -->
 <video autoplay muted loop>
@@ -316,11 +371,11 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
     <a href="#">Projects</a>
 
     <!-- Social icon buttons -->
-    <a class="icon-btn" href="https://www.snapchat.com/add/itzxconnorx" target="_blank">
+    <a class="icon-btn" href="https://www.snapchat.com/add/YOURSNAP" target="_blank">
         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/snapchat.svg" alt="Snapchat">
         <span class="tooltip">Snapchat</span>
     </a>
-    <a class="icon-btn" href="https://www.tiktok.com/@iuvconnor" target="_blank">
+    <a class="icon-btn" href="https://www.tiktok.com/@YOURTIKTOK" target="_blank">
         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" alt="TikTok">
         <span class="tooltip">TikTok</span>
     </a>
@@ -328,6 +383,13 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
 
 <p class="footer">© 2026 Connor — Built with passion</p>
 
+</div>
+
+<!-- background switcher -->
+<div class="bg-switcher">
+    <button data-bg="video">Video</button>
+    <button data-bg="gradient">Gradient</button>
+    <button data-bg="solid">Solid</button>
 </div>
 
 <!-- LIVE WEBSOCKET SCRIPT -->
@@ -338,6 +400,7 @@ const iconEl = document.getElementById("presence-icon");
 const dotEl = document.getElementById("status-dot");
 const barEl = document.getElementById("spotify-bar");
 const fillEl = document.getElementById("spotify-fill");
+const cursorEl = document.getElementById("custom-cursor");
 
 let typingInterval = null;
 let progressInterval = null;
@@ -471,6 +534,21 @@ ws.onmessage = (event) => {
         updatePresence(payload.d);
     }
 };
+
+/* custom cursor follow */
+document.addEventListener("mousemove", (e) => {
+    cursorEl.style.left = e.clientX + "px";
+    cursorEl.style.top = e.clientY + "px";
+});
+
+/* background switcher */
+document.querySelectorAll(".bg-switcher button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const mode = btn.getAttribute("data-bg");
+        document.body.classList.remove("bg-video","bg-gradient","bg-solid");
+        document.body.classList.add("bg-" + mode);
+    });
+});
 </script>
 
 </body>
