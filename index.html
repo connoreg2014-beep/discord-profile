@@ -35,9 +35,42 @@ video, img.background{
     width:450px;
     padding:30px;
     border-radius:20px;
-    background:rgba(20,20,20,0.5);
+    background:rgba(20,20,20,0.55);
     text-align:center;
-    box-shadow:0 10px 40px rgba(0,0,0,0.6);
+    box-shadow:0 20px 60px rgba(0,0,0,0.8);
+    border:1px solid rgba(255,255,255,0.12);
+    overflow:hidden;
+    animation:float 6s ease-in-out infinite;
+}
+
+/* glow behind card */
+.card::before{
+    content:"";
+    position:absolute;
+    inset:-40%;
+    background:radial-gradient(circle at top left, rgba(255,0,204,0.35), transparent 55%),
+               radial-gradient(circle at bottom right, rgba(0,234,255,0.35), transparent 55%);
+    z-index:-1;
+}
+
+/* glass reflection */
+.card::after{
+    content:"";
+    position:absolute;
+    top:-40%;
+    left:-20%;
+    width:80%;
+    height:200%;
+    background:linear-gradient(120deg, rgba(255,255,255,0.18), transparent 60%);
+    opacity:0.35;
+    transform:rotate(8deg);
+    pointer-events:none;
+}
+
+/* floating animation */
+@keyframes float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
 }
 
 /* avatar */
@@ -47,6 +80,12 @@ video, img.background{
     border-radius:50%;
     border:3px solid #5865F2;
     margin-bottom:10px;
+    transition:0.3s;
+    box-shadow:0 0 0 rgba(88,101,242,0.6);
+}
+.avatar:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 25px rgba(122,92,255,0.9);
 }
 
 /* username (GRADIENT ADDED) */
@@ -73,10 +112,11 @@ h1{
     align-items:center;
     gap:12px;
     padding:12px 15px;
-    background:rgba(255,255,255,0.08);
+    background:rgba(10,10,10,0.7);
     border-radius:12px;
-    backdrop-filter:blur(6px);
+    backdrop-filter:blur(10px);
     border:1px solid rgba(255,255,255,0.12);
+    box-shadow:0 10px 30px rgba(0,0,0,0.7);
 }
 
 /* status dot */
@@ -86,6 +126,7 @@ h1{
     border-radius:50%;
     background:#43b581;
     flex-shrink:0;
+    box-shadow:0 0 12px rgba(67,181,129,0.9);
 }
 
 /* icon (album art or app icon) */
@@ -114,17 +155,50 @@ h1{
     opacity:0.8;
 }
 
+/* spotify progress bar */
+#spotify-bar{
+    margin-top:6px;
+    width:100%;
+    height:4px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.12);
+    overflow:hidden;
+}
+#spotify-fill{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg,#1db954,#00eaff);
+    transition:width 0.2s linear;
+}
+
 /* skills */
+.skills{
+    margin-top:18px;
+}
 .skills span{
-    display:inline-block;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
     background:#222;
     padding:6px 10px;
     margin:4px;
     border-radius:8px;
     font-size:13px;
 }
+.skills span::before{
+    font-size:14px;
+}
+.skills span[data-skill="Python"]::before{ content:"🐍"; }
+.skills span[data-skill="JavaScript"]::before{ content:"🟨"; }
+.skills span[data-skill="HTML"]::before{ content:"📄"; }
+.skills span[data-skill="CSS"]::before{ content:"🎨"; }
+.skills span[data-skill="Discord.py"]::before{ content:"🤖"; }
 
 /* buttons (GRADIENT ADDED) */
+.buttons{
+    margin-top:18px;
+}
 .buttons a{
     display:inline-block;
     padding:10px 16px;
@@ -137,11 +211,64 @@ h1{
     transition:.3s;
     background-size:200%;
 }
-
 .buttons a:hover{
     transform:scale(1.05);
     background-position:100% 0;
     filter:brightness(1.2);
+}
+
+/* icon-only social buttons */
+.icon-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:42px;
+    height:42px;
+    margin:6px;
+    border-radius:50%;
+    background: linear-gradient(135deg, #ff00cc, #7a5cff, #00eaff);
+    text-decoration:none;
+    transition:.3s;
+    background-size:200%;
+    box-shadow:0 0 12px rgba(0,0,0,0.7);
+    position:relative;
+}
+.icon-btn:hover{
+    transform:scale(1.08);
+    background-position:100% 0;
+    filter:brightness(1.2);
+}
+.icon-btn img{
+    width:22px;
+    height:22px;
+    filter:invert(1);
+}
+
+/* footer */
+.footer{
+    margin-top:18px;
+    font-size:11px;
+    opacity:0.7;
+}
+
+/* tooltip for socials */
+.icon-btn span.tooltip{
+    position:absolute;
+    bottom:52px;
+    left:50%;
+    transform:translateX(-50%);
+    background:rgba(0,0,0,0.85);
+    padding:4px 8px;
+    border-radius:6px;
+    font-size:11px;
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:0.2s;
+}
+.icon-btn:hover span.tooltip{
+    opacity:1;
+    transform:translateX(-50%) translateY(-2px);
 }
 </style>
 </head>
@@ -162,29 +289,44 @@ h1{
 Hi, my name is Connor. I've been coding for 4 years now, and I have experience with Python, JavaScript, HTML, CSS, and building Discord bots and automation tools. I enjoy learning new technologies and creating fun and useful projects.
 </p>
 
-<!-- NEW WIDGET-STYLE PRESENCE BOX -->
+<!-- WIDGET-STYLE PRESENCE BOX -->
 <div id="presence-box">
     <div id="status-dot"></div>
     <img id="presence-icon" src="" alt="">
     <div id="presence-text">
         <p id="presence-title">Loading Discord status...</p>
         <p id="presence-sub"></p>
+        <div id="spotify-bar" style="display:none;">
+            <div id="spotify-fill"></div>
+        </div>
     </div>
 </div>
 
 <div class="skills">
-<span>Python</span>
-<span>JavaScript</span>
-<span>HTML</span>
-<span>CSS</span>
-<span>Discord.py</span>
+    <span data-skill="Python">Python</span>
+    <span data-skill="JavaScript">JavaScript</span>
+    <span data-skill="HTML">HTML</span>
+    <span data-skill="CSS">CSS</span>
+    <span data-skill="Discord.py">Discord.py</span>
 </div>
 
 <div class="buttons">
-<a href="https://discord.com/users/1117676075271594104">Discord</a>
-<a href="https://github.com/itzzjustconnor">GitHub</a>
-<a href="#">Projects</a>
+    <a href="https://discord.com/users/1117676075271594104">Discord</a>
+    <a href="https://github.com/itzzjustconnor">GitHub</a>
+    <a href="#">Projects</a>
+
+    <!-- Social icon buttons -->
+    <a class="icon-btn" href="https://www.snapchat.com/add/YOURSNAP" target="_blank">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/snapchat.svg" alt="Snapchat">
+        <span class="tooltip">Snapchat</span>
+    </a>
+    <a class="icon-btn" href="https://www.tiktok.com/@YOURTIKTOK" target="_blank">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" alt="TikTok">
+        <span class="tooltip">TikTok</span>
+    </a>
 </div>
+
+<p class="footer">© 2026 Connor — Built with passion</p>
 
 </div>
 
@@ -194,6 +336,11 @@ const titleEl = document.getElementById("presence-title");
 const subEl = document.getElementById("presence-sub");
 const iconEl = document.getElementById("presence-icon");
 const dotEl = document.getElementById("status-dot");
+const barEl = document.getElementById("spotify-bar");
+const fillEl = document.getElementById("spotify-fill");
+
+let typingInterval = null;
+let progressInterval = null;
 
 /* Status dot colors */
 const statusColors = {
@@ -211,10 +358,59 @@ const appIcons = {
     "Google Chrome": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googlechrome.svg"
 };
 
+function setStatusDot(status){
+    const color = statusColors[status] || statusColors.offline;
+    dotEl.style.background = color;
+    dotEl.style.boxShadow = `0 0 12px ${color}`;
+}
+
+function startTyping(text){
+    if (typingInterval) clearInterval(typingInterval);
+    subEl.innerText = "";
+    let i = 0;
+    typingInterval = setInterval(() => {
+        if (i <= text.length){
+            subEl.innerText = text.slice(0, i);
+            i++;
+        } else {
+            clearInterval(typingInterval);
+        }
+    }, 40);
+}
+
+function startSpotifyProgress(timestamps){
+    if (!timestamps || !timestamps.start || !timestamps.end){
+        barEl.style.display = "none";
+        return;
+    }
+    barEl.style.display = "block";
+    if (progressInterval) clearInterval(progressInterval);
+
+    const start = timestamps.start;
+    const end = timestamps.end;
+    const duration = end - start;
+
+    function update(){
+        const now = Date.now();
+        const elapsed = now - start;
+        let pct = (elapsed / duration) * 100;
+        if (pct < 0) pct = 0;
+        if (pct > 100) pct = 100;
+        fillEl.style.width = pct + "%";
+    }
+    update();
+    progressInterval = setInterval(update, 500);
+}
+
+function stopSpotifyProgress(){
+    if (progressInterval) clearInterval(progressInterval);
+    barEl.style.display = "none";
+    fillEl.style.width = "0%";
+}
+
 function updatePresence(d) {
 
-    /* Update status dot */
-    dotEl.style.background = statusColors[d.discord_status] || statusColors.offline;
+    setStatusDot(d.discord_status);
 
     /* Spotify */
     if (d.listening_to_spotify && d.spotify) {
@@ -222,8 +418,12 @@ function updatePresence(d) {
         subEl.innerText = d.spotify.artist;
         iconEl.src = d.spotify.album_art_url;
         iconEl.style.display = "block";
+        stopSpotifyProgress();
+        startSpotifyProgress(d.spotify.timestamps);
         return;
     }
+
+    stopSpotifyProgress();
 
     /* Other activities */
     const activity = d.activities.find(a => a.type !== 4);
@@ -231,7 +431,6 @@ function updatePresence(d) {
         titleEl.innerText = activity.name;
         subEl.innerText = `${activity.details || ""} ${activity.state || ""}`.trim();
 
-        /* If we have an icon for this app */
         if (appIcons[activity.name]) {
             iconEl.src = appIcons[activity.name];
             iconEl.style.display = "block";
@@ -246,7 +445,7 @@ function updatePresence(d) {
     const custom = d.activities.find(a => a.type === 4);
     if (custom) {
         titleEl.innerText = "Status";
-        subEl.innerText = custom.state || "";
+        startTyping(custom.state || "");
         iconEl.style.display = "none";
         return;
     }
