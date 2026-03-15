@@ -5,102 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Connor | Bot Developer</title>
-/* MUSIC PLAYER */
-#music-player{
-    position:fixed;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px 16px;
-    background:rgba(0,0,0,0.55);
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,0.15);
-    backdrop-filter:blur(10px);
-    box-shadow:0 0 20px rgba(0,0,0,0.6);
-    z-index:9999;
-}
-
-#music-art{
-    width:48px;
-    height:48px;
-    border-radius:10px;
-    object-fit:cover;
-}
-
-#music-info{
-    display:flex;
-    flex-direction:column;
-    width:150px;
-}
-
-#music-title{
-    margin:0;
-    font-size:14px;
-    font-weight:600;
-}
-
-#music-artist{
-    margin:0;
-    font-size:12px;
-    opacity:0.7;
-}
-
-#music-progress{
-    margin-top:6px;
-    width:100%;
-    height:4px;
-    background:rgba(255,255,255,0.15);
-    border-radius:999px;
-    overflow:hidden;
-}
-
-#music-progress-fill{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#ff00cc,#7a5cff,#00eaff);
-    border-radius:999px;
-    transition:width 0.1s linear;
-}
-
-#music-play{
-    background:none;
-    border:none;
-    color:white;
-    font-size:20px;
-    cursor:pointer;
-}
-
-#music-volume{
-    width:80px;
-    accent-color:#ff00cc;
-}
-
-/* VISUALIZER */
-#visualizer{
-    position:fixed;
-    bottom:90px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:4px;
-    z-index:9999;
-}
-
-.visual-bar{
-    width:6px;
-    height:20px;
-    background:linear-gradient(180deg,#ff00cc,#7a5cff,#00eaff);
-    border-radius:6px;
-    animation:visualize 0.4s infinite ease-in-out alternate;
-}
-
-@keyframes visualize{
-    from{ height:6px; opacity:0.5; }
-    to{ height:28px; opacity:1; }
-}
 
 <style>
 body{
@@ -112,20 +16,7 @@ body{
     justify-content:center;
     overflow:hidden;
     color:white;
-    cursor:none; /* hide default cursor */
-    background:#000;
 }
-
-/* background modes */
-body.bg-video video{ display:block; }
-body.bg-gradient{
-    background:radial-gradient(circle at top, #3b1d5f, #05010a 55%, #000 100%);
-}
-body.bg-gradient video{ display:none; }
-body.bg-solid{
-    background:#050509;
-}
-body.bg-solid video{ display:none; }
 
 /* video background or static image */
 video, img.background{
@@ -136,19 +27,6 @@ video, img.background{
     height:100%;
     object-fit:cover;
     z-index:-2;
-}
-
-/* custom cursor */
-#custom-cursor{
-    position:fixed;
-    width:26px;
-    height:26px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,0.9);
-    box-shadow:0 0 12px rgba(255,255,255,0.9);
-    pointer-events:none;
-    transform:translate(-50%,-50%);
-    z-index:9999;
 }
 
 /* profile card */
@@ -393,37 +271,105 @@ h1{
     transform:translateX(-50%) translateY(-2px);
 }
 
-/* background switcher */
-.bg-switcher{
+/* MUSIC PLAYER */
+#music-player{
     position:fixed;
     bottom:20px;
-    right:20px;
+    left:50%;
+    transform:translateX(-50%);
     display:flex;
-    gap:8px;
-    z-index:20;
-    font-size:11px;
+    align-items:center;
+    gap:12px;
+    padding:12px 16px;
+    background:rgba(0,0,0,0.55);
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,0.15);
+    backdrop-filter:blur(10px);
+    box-shadow:0 0 20px rgba(0,0,0,0.6);
+    z-index:9999;
 }
-.bg-switcher button{
-    padding:6px 10px;
+
+#music-art{
+    width:48px;
+    height:48px;
+    border-radius:10px;
+    object-fit:cover;
+}
+
+#music-info{
+    display:flex;
+    flex-direction:column;
+    width:150px;
+}
+
+#music-title{
+    margin:0;
+    font-size:14px;
+    font-weight:600;
+}
+
+#music-artist{
+    margin:0;
+    font-size:12px;
+    opacity:0.7;
+}
+
+#music-progress{
+    margin-top:6px;
+    width:100%;
+    height:4px;
+    background:rgba(255,255,255,0.15);
     border-radius:999px;
-    border:none;
-    background:rgba(0,0,0,0.7);
-    color:white;
-    cursor:pointer;
-    font-size:11px;
-    border:1px solid rgba(255,255,255,0.18);
-    backdrop-filter:blur(6px);
-    transition:0.2s;
+    overflow:hidden;
 }
-.bg-switcher button:hover{
-    background:rgba(255,255,255,0.12);
+
+#music-progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ff00cc,#7a5cff,#00eaff);
+    border-radius:999px;
+    transition:width 0.1s linear;
+}
+
+#music-play{
+    background:none;
+    border:none;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+#music-volume{
+    width:80px;
+    accent-color:#ff00cc;
+}
+
+/* VISUALIZER */
+#visualizer{
+    position:fixed;
+    bottom:90px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:4px;
+    z-index:9999;
+}
+
+.visual-bar{
+    width:6px;
+    height:20px;
+    background:linear-gradient(180deg,#ff00cc,#7a5cff,#00eaff);
+    border-radius:6px;
+    animation:visualize 0.4s infinite ease-in-out alternate;
+}
+
+@keyframes visualize{
+    from{ height:6px; opacity:0.5; }
+    to{ height:28px; opacity:1; }
 }
 </style>
 </head>
-<body class="bg-video">
-
-<!-- custom cursor -->
-<div id="custom-cursor"></div>
+<body>
 
 <!-- Background video -->
 <video autoplay muted loop>
@@ -467,11 +413,11 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
     <a href="#">Projects</a>
 
     <!-- Social icon buttons -->
-    <a class="icon-btn" href="https://www.snapchat.com/add/itzxconnorx" target="_blank">
+    <a class="icon-btn" href="https://www.snapchat.com/add/YOURSNAP" target="_blank">
         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/snapchat.svg" alt="Snapchat">
         <span class="tooltip">Snapchat</span>
     </a>
-    <a class="icon-btn" href="https://www.tiktok.com/@iuvconnor" target="_blank">
+    <a class="icon-btn" href="https://www.tiktok.com/@YOURTIKTOK" target="_blank">
         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" alt="TikTok">
         <span class="tooltip">TikTok</span>
     </a>
@@ -481,12 +427,24 @@ Hi, my name is Connor. I've been coding for 4 years now, and I have experience w
 
 </div>
 
-<!-- background switcher -->
-<div class="bg-switcher">
-    <button data-bg="video">Video</button>
-    <button data-bg="gradient">Gradient</button>
-    <button data-bg="solid">Solid</button>
+<!-- MUSIC PLAYER UI -->
+<div id="music-player">
+    <img id="music-art" src="album.png" alt="Album Art">
+    
+    <div id="music-info">
+        <p id="music-title">Now Playing</p>
+        <p id="music-artist">Your Song</p>
+        
+        <div id="music-progress">
+            <div id="music-progress-fill"></div>
+        </div>
+    </div>
+
+    <button id="music-play">⏸</button>
+    <input type="range" id="music-volume" min="0" max="1" step="0.01" value="0.5">
 </div>
+
+<audio id="music-audio" src="song.mp3" preload="auto"></audio>
 
 <!-- LIVE WEBSOCKET SCRIPT -->
 <script>
@@ -496,7 +454,6 @@ const iconEl = document.getElementById("presence-icon");
 const dotEl = document.getElementById("status-dot");
 const barEl = document.getElementById("spotify-bar");
 const fillEl = document.getElementById("spotify-fill");
-const cursorEl = document.getElementById("custom-cursor");
 
 let typingInterval = null;
 let progressInterval = null;
@@ -631,29 +588,17 @@ ws.onmessage = (event) => {
     }
 };
 
-/* custom cursor follow */
-document.addEventListener("mousemove", (e) => {
-    cursorEl.style.left = e.clientX + "px";
-    cursorEl.style.top = e.clientY + "px";
-});
-
-/* background switcher */
-document.querySelectorAll(".bg-switcher button").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const mode = btn.getAttribute("data-bg");
-        document.body.classList.remove("bg-video","bg-gradient","bg-solid");
-        document.body.classList.add("bg-" + mode);
-    });
-});
-    /* MUSIC PLAYER */
+/* MUSIC PLAYER */
 const audio = document.getElementById("music-audio");
 const playBtn = document.getElementById("music-play");
 const volumeSlider = document.getElementById("music-volume");
 const progressFill = document.getElementById("music-progress-fill");
 
-// autoplay fix
+// autoplay unlock on first click
 document.addEventListener("click", () => {
-    if (audio.paused) audio.play();
+    if (audio.paused) audio.play().then(() => {
+        playBtn.textContent = "⏸";
+    }).catch(() => {});
 }, { once:true });
 
 // play/pause
@@ -668,12 +613,14 @@ playBtn.addEventListener("click", () => {
 });
 
 // volume
+audio.volume = 0.5;
 volumeSlider.addEventListener("input", () => {
     audio.volume = volumeSlider.value;
 });
 
 // progress bar
 audio.addEventListener("timeupdate", () => {
+    if (!audio.duration) return;
     const pct = (audio.currentTime / audio.duration) * 100;
     progressFill.style.width = pct + "%";
 });
@@ -689,26 +636,7 @@ for(let i=0;i<12;i++){
     bar.style.animationDelay = (i * 0.1) + "s";
     visualizer.appendChild(bar);
 }
-
 </script>
-<!-- MUSIC PLAYER UI -->
-<div id="music-player">
-    <img id="music-art" src="album.png" alt="Album Art">
-    
-    <div id="music-info">
-        <p id="music-title">Now Playing</p>
-        <p id="music-artist">Your Song</p>
-        
-        <div id="music-progress">
-            <div id="music-progress-fill"></div>
-        </div>
-    </div>
-
-    <button id="music-play">⏸</button>
-    <input type="range" id="music-volume" min="0" max="1" step="0.01" value="0.5">
-</div>
-
-<audio id="music-audio" src="song.mp3" preload="auto"></audio>
 
 </body>
 </html>
