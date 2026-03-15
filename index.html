@@ -5,6 +5,102 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Connor | Bot Developer</title>
+/* MUSIC PLAYER */
+#music-player{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 16px;
+    background:rgba(0,0,0,0.55);
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,0.15);
+    backdrop-filter:blur(10px);
+    box-shadow:0 0 20px rgba(0,0,0,0.6);
+    z-index:9999;
+}
+
+#music-art{
+    width:48px;
+    height:48px;
+    border-radius:10px;
+    object-fit:cover;
+}
+
+#music-info{
+    display:flex;
+    flex-direction:column;
+    width:150px;
+}
+
+#music-title{
+    margin:0;
+    font-size:14px;
+    font-weight:600;
+}
+
+#music-artist{
+    margin:0;
+    font-size:12px;
+    opacity:0.7;
+}
+
+#music-progress{
+    margin-top:6px;
+    width:100%;
+    height:4px;
+    background:rgba(255,255,255,0.15);
+    border-radius:999px;
+    overflow:hidden;
+}
+
+#music-progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ff00cc,#7a5cff,#00eaff);
+    border-radius:999px;
+    transition:width 0.1s linear;
+}
+
+#music-play{
+    background:none;
+    border:none;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+#music-volume{
+    width:80px;
+    accent-color:#ff00cc;
+}
+
+/* VISUALIZER */
+#visualizer{
+    position:fixed;
+    bottom:90px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:4px;
+    z-index:9999;
+}
+
+.visual-bar{
+    width:6px;
+    height:20px;
+    background:linear-gradient(180deg,#ff00cc,#7a5cff,#00eaff);
+    border-radius:6px;
+    animation:visualize 0.4s infinite ease-in-out alternate;
+}
+
+@keyframes visualize{
+    from{ height:6px; opacity:0.5; }
+    to{ height:28px; opacity:1; }
+}
 
 <style>
 body{
@@ -549,7 +645,70 @@ document.querySelectorAll(".bg-switcher button").forEach(btn => {
         document.body.classList.add("bg-" + mode);
     });
 });
+    /* MUSIC PLAYER */
+const audio = document.getElementById("music-audio");
+const playBtn = document.getElementById("music-play");
+const volumeSlider = document.getElementById("music-volume");
+const progressFill = document.getElementById("music-progress-fill");
+
+// autoplay fix
+document.addEventListener("click", () => {
+    if (audio.paused) audio.play();
+}, { once:true });
+
+// play/pause
+playBtn.addEventListener("click", () => {
+    if (audio.paused){
+        audio.play();
+        playBtn.textContent = "⏸";
+    } else {
+        audio.pause();
+        playBtn.textContent = "▶";
+    }
+});
+
+// volume
+volumeSlider.addEventListener("input", () => {
+    audio.volume = volumeSlider.value;
+});
+
+// progress bar
+audio.addEventListener("timeupdate", () => {
+    const pct = (audio.currentTime / audio.duration) * 100;
+    progressFill.style.width = pct + "%";
+});
+
+// VISUALIZER
+const visualizer = document.createElement("div");
+visualizer.id = "visualizer";
+document.body.appendChild(visualizer);
+
+for(let i=0;i<12;i++){
+    const bar = document.createElement("div");
+    bar.classList.add("visual-bar");
+    bar.style.animationDelay = (i * 0.1) + "s";
+    visualizer.appendChild(bar);
+}
+
 </script>
+<!-- MUSIC PLAYER UI -->
+<div id="music-player">
+    <img id="music-art" src="album.png" alt="Album Art">
+    
+    <div id="music-info">
+        <p id="music-title">Now Playing</p>
+        <p id="music-artist">Your Song</p>
+        
+        <div id="music-progress">
+            <div id="music-progress-fill"></div>
+        </div>
+    </div>
+
+    <button id="music-play">⏸</button>
+    <input type="range" id="music-volume" min="0" max="1" step="0.01" value="0.5">
+</div>
+
+<audio id="music-audio" src="song.mp3" preload="auto"></audio>
 
 </body>
 </html>
